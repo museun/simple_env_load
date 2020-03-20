@@ -72,5 +72,5 @@ pub fn parse_and_set(data: &str, set: fn(k: &str, v: &str)) {
             })
         })
         .flat_map(|mut iter| Some((iter.next()?, iter.next()?.replace('"', ""))))
-        .for_each(|(k, v)| set(&k, &v))
+        .for_each(|(k, v)| set(k, &v))
 }
