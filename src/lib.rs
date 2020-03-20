@@ -8,7 +8,7 @@ Giving a sequence of env files from most general to most specific.
 Parse each file for key val remove any comments blank lines and extra whitespace.
 
 # Syntax
-```no_run
+```norun
 TEST_DATA=bar       # spaces are optional
 ## this is a comment
 TEST_baz = "baz"    # double quotes are removed
