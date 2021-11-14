@@ -70,7 +70,7 @@ where
 /// assert_eq!(std::env::var("TEST_BAR").unwrap(), "\"nested\"");
 /// ```
 pub fn parse_and_set(data: &str, set: fn(k: &str, v: &str)) {
-    parse(data).for_each(|(k, v)| set(k, &v))
+    parse(data).for_each(|(k, v)| set(k, v))
 }
 
 fn parse(data: &str) -> impl Iterator<Item = (&str, &str)> + '_ {
