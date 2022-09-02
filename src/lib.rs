@@ -26,21 +26,26 @@ will produce:
 
 /// Tries to load the env. vars from these paths
 ///
+/// This returns a Vec of all of the key=value pairs it set
+///
 /// ```rust
 /// // this will add envs it finds from the first to the last
 /// // so important (read: secret/user) ends should be at the end of the iterator
 /// simple_env_load::load_env_from(&["./env", "~/.config/.env"]);
 /// ```
-pub fn load_env_from<I, T>(paths: I)
+pub fn load_env_from<I, T>(paths: I) -> Vec<(String, String)>
 where
     I: IntoIterator<Item = T>,
     T: AsRef<std::path::Path>,
 {
     paths
         .into_iter()
-        .map(std::fs::read_to_string)
+        .map(std::fs::read_to_string) // TODO make this fallible
         .flatten()
-        .for_each(|data| parse_and_set(&data, |k, v| std::env::set_var(&k, &v)))
+        .fold(Vec::new(), |mut entries, data| {
+            parse_and_set(&data, |k, v| entries.push((k.to_string(), v.to_string())));
+            entries
+        })
 }
 
 /// Parse an env string and calls a function for each key=value pair
@@ -69,7 +74,7 @@ where
 /// assert_eq!(std::env::var("TEST_FOO").unwrap(), "'nested'");
 /// assert_eq!(std::env::var("TEST_BAR").unwrap(), "\"nested\"");
 /// ```
-pub fn parse_and_set(data: &str, set: fn(k: &str, v: &str)) {
+pub fn parse_and_set(data: &str, mut set: impl FnMut(&str, &str)) {
     parse(data).for_each(|(k, v)| set(k, v))
 }
 
