@@ -43,7 +43,10 @@ where
         .map(std::fs::read_to_string) // TODO make this fallible
         .flatten()
         .fold(Vec::new(), |mut entries, data| {
-            parse_and_set(&data, |k, v| entries.push((k.to_string(), v.to_string())));
+            parse_and_set(&data, |k, v| {
+                std::env::set_var(&k, &v);
+                entries.push((k.to_string(), v.to_string()))
+            });
             entries
         })
 }
